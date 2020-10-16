@@ -36,7 +36,7 @@ def initialize_population(N: int, l: int, distribution: dict):
     return np.array(population)
 
 
-def fitness(individual: np.ndarray, _type="1Max"):
+def evaluation(individual: np.ndarray, _type="1Max"):
     """
     - Decsription: Đánh giá độ thích nghi của một cá thể theo hàm OneMax
 
@@ -60,7 +60,7 @@ def fitness(individual: np.ndarray, _type="1Max"):
 
 
 
-def evaluation(population: np.ndarray, optimized_function:str):
+def average_evaluation(population: np.ndarray, optimized_function:str):
     """
     - Description: Đánh giá độ thích nghi của quần thể bằng hàm OneMax
                    Công thức của hàm OneMax: $f(x) = \sum_{i=1}^{l}x_i$
@@ -74,14 +74,17 @@ def evaluation(population: np.ndarray, optimized_function:str):
 
     sum_fitness = 0
 
+
+    number_evals = 0
     # Loop though each individual and calculate the its fitness
     for individual in population:
-        current_fitness = fitness(individual, optimized_function)
+        current_fitness = evaluation(individual, optimized_function)
+        number_evals += 1
         sum_fitness += current_fitness
     
     average_fitness = sum_fitness / len(population)
 
-    return average_fitness
+    return number_evals, average_fitness
 
 
 
@@ -225,9 +228,9 @@ def tournament_selection(population: np.ndarray, tournament_size:int, optimized_
 
             # Select the best individual of the tournament
             index_best_individual = low
-            best_fitness = fitness(population[index_best_individual], optimized_function)
+            best_fitness = evaluation(population[index_best_individual], optimized_function)
             for i in range(low, high+1):
-                current_fitness = fitness(population[i])
+                current_fitness = evaluation(population[i])
                 if current_fitness > best_fitness:
                     index_best_individual = i
                     best_fitness = current_fitness
@@ -245,7 +248,8 @@ def check_convergence(population: np.ndarray):
         - population (np.ndarray): quần thể hiện tại
 
     - Return values:
-        - Boolean value: True nếu quần thể đã hội tụ(tất cả các cá thể đều đạt cấu hình giống nhau), False nếu ngược lại
+        - Boolean value: True nếu quần thể đã hội tụ(tất cả các cá thể đều đạt cấu hình giống nhau)
+            và được cấu hình là [1 1 ... 1], False nếu không thỏa.
     """
 
     N = len(population)
@@ -254,4 +258,5 @@ def check_convergence(population: np.ndarray):
         comparison = population[i] == population[N-1]
         if not comparison.all():
             return False
+
     return True
