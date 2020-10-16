@@ -49,7 +49,8 @@ def genetic_algorithm(initialized_population: np.ndarray, optimized_function, to
     if evaluation(population[0]) == len(population[0]):
             return (True, population[0], number_of_evaluations)
 
-    return (False, population[0], number_of_evaluations)
+    return (False, population[0], number_of_evaluations)    
+
 
 
 def main(args):

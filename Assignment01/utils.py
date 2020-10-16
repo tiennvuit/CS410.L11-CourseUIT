@@ -48,9 +48,9 @@ def evaluation(individual: np.ndarray, _type="1Max"):
     """
     fitness = 0
 
-    if _type=="1Max":
+    if _type=="1MAX":
         fitness = np.sum(individual)
-    elif _type=="Trap5":
+    elif _type=="TRAP5":
         bit1_numbers = np.sum(individual)
         if bit1_numbers == len(individual):
             fitness = len(individual)
@@ -73,8 +73,6 @@ def average_evaluation(population: np.ndarray, optimized_function:str):
     """
 
     sum_fitness = 0
-
-
     number_evals = 0
     # Loop though each individual and calculate the its fitness
     for individual in population:
@@ -85,7 +83,6 @@ def average_evaluation(population: np.ndarray, optimized_function:str):
     average_fitness = sum_fitness / len(population)
 
     return number_evals, average_fitness
-
 
 
 def crossover(population: np.ndarray, crossover_way='1X', threshold=None):

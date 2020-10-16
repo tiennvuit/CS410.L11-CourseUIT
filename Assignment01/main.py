@@ -4,7 +4,8 @@ from sGA_onemax import genetic_algorithm
 from config import DISTRIB
 from utils import initialize_population
 
-def find_upper_bound_of_MRPS(problem_size: int):
+
+def find_MRPS(problem_size):
 	"""
 	- Description: Find the upper bound of the Minimally Required population size - MRPS
 	- Arguments:
@@ -12,6 +13,8 @@ def find_upper_bound_of_MRPS(problem_size: int):
 	- Return values:
 		+ The population size (int) graranteed find the optimal solution with problem_size parameter.
 	"""
+
+	# Stage 1: Find the upper bound of the population size
 	population_size = 4
 
 	# Run the the first times
@@ -22,15 +25,22 @@ def find_upper_bound_of_MRPS(problem_size: int):
 	while not success:
 		print("[INFO] The size of population is {}".format(population_size))
 		population_size *= 2
-		intital_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB) 	
-		success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intital_population, 
-														optimized_function='1MAX', tournament_size=4)
 
-	return population_size
+		successes = []
 
+		# Run 10 times
+		for i in range(10):
+			intital_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB) 	
+			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intital_population, 
+															optimized_function='1MAX', tournament_size=4)
 
-def find_MRPS(problem_size):
-	pass
+			successes.append(success)
+
+		if all(successes):
+			return population_size
+
+	return None
+
 
 
 def bisection(problem_size):
@@ -48,5 +58,5 @@ if __name__ == '__main__':
 	# 	run(problem_size, times=10)
 
 	problem_size = 10
-	upperbound_popsize = find_upper_bound_of_MRPS(10)
+	upperbound_popsize = find_MRPS(10)
 	print(upperbound_popsize)
