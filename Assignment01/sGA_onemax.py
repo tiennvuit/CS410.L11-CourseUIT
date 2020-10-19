@@ -4,7 +4,7 @@ from utils import *#(initialize_population, fitness, evaluation, crossover, pop_
 from config import DISTRIB
 
 
-def genetic_algorithm(initialized_population: np.ndarray, optimized_function, tournament_size=4, limit_steps=1e6):
+def genetic_algorithm(initialized_population: np.ndarray, optimized_function='1MAX', hybridization='1X', tournament_size=4, limit_steps=1e6):
     """
     - Description: Cài đặt giải thuật di truyền để giải bài toán tối ưu hàm OneMax
 
@@ -27,7 +27,7 @@ def genetic_algorithm(initialized_population: np.ndarray, optimized_function, to
     while not check_convergence(population) and steps < limit_steps:
 
         # Variation step
-        offspring = crossover(population=population)
+        offspring = crossover(population=population, crossover_way=hybridization)
 
         # Evaluate the offstring
         number_evals, average_eval = average_evaluation(population=offspring, optimized_function=optimized_function)
@@ -83,9 +83,10 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Evaluation Algorithm solve OneMax Problem.')
     parser.add_argument('--population_size', '-pop_size', type=int, required=True, help='The population size.')
-    parser.add_argument('--function', '-f', choices=['1MAX', 'TRAP5'], default='1MAX', help='The function needed optimize.')
     parser.add_argument('--problem_size', '-pro_size', type=int, required=True, help='The problem size.')
     parser.add_argument('--tournament_size', '-tour_size', type=int, required=True, help='The tournament size')
+    parser.add_argument('--function', '-func', choices=['1MAX', 'TRAP5'], default='1MAX', help='The function needed optimize.')
+    parser.add_argument('--crossover_way', '-cross', choices=['1X', '2X', 'UX'], default='1X', help='The crossover way between two individuals')
     parser.add_argument('--threshold', '-th', type=int, required=False, help='The threshould for random value.')
     args = vars(parser.parse_args())
 

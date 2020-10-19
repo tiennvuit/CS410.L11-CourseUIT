@@ -1,11 +1,11 @@
 import os
 import numpy as np 
 from sGA_onemax import genetic_algorithm
-from config import DISTRIB
+from config import DISTRIB, RANDOM_SEED_VALUES
 from utils import initialize_population
 
 
-def find_MRPS(problem_size):
+def find_MRPS(problem_size, optimized_function):
 	"""
 	- Description: Find the upper bound of the Minimally Required population size - MRPS
 	- Arguments:
@@ -17,30 +17,58 @@ def find_MRPS(problem_size):
 	# Stage 1: Find the upper bound of the population size
 	population_size = 4
 
-	# Run the the first times
-	intital_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB) 	
-	success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intital_population, 
-														optimized_function='1MAX', tournament_size=4)
-	
-	while not success:
+	# # Run the the first times
+	# intital_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB) 	
+	# success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intital_population, 
+	# 													optimized_function='1MAX', tournament_size=4)
+
+	# Stage 1: Find the upper bound of MRPS
+	while True:
+
 		print("[INFO] The size of population is {}".format(population_size))
 		population_size *= 2
 
-		successes = []
-
+		flag = True
 		# Run 10 times
 		for i in range(10):
+			np.random.seed(RANDOM_SEED_VALUES[i])
+			intital_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB) 	
+			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intital_population, 
+															optimized_function=optimized_function, tournament_size=4)
+			if not success:
+				flag = False
+				break
+		if flag:
+			break
+
+	# Stage 2: Find MRPS
+	upper_N = population_size
+	lower_N = upper_N // 2
+	
+	while (upper_N - lower_N) / upper_N > 0.1:
+		
+		N = (upper_N + lower_N) / 2
+
+		successes = []
+		# Run 10 times
+		for i in range(10):
+			np.random.seed(RANDOM_SEED_VALUES[i])
 			intital_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB) 	
 			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intital_population, 
 															optimized_function='1MAX', tournament_size=4)
 
-			successes.append(success)
+			if not success:
+				break
 
 		if all(successes):
-			return population_size
+			upper_N = N
+		else:
+			lower_N = N
 
-	return None
+		if upper_N - lower_N <= 2:
+			break
 
+	return upper_N
 
 
 def bisection(problem_size):
@@ -58,5 +86,5 @@ if __name__ == '__main__':
 	# 	run(problem_size, times=10)
 
 	problem_size = 10
-	upperbound_popsize = find_MRPS(10)
+	upperbound_popsize = find_MRPS(10, optimized_function='1MAX')
 	print(upperbound_popsize)
