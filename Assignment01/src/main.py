@@ -4,12 +4,16 @@
 """
 
 import os
+import math
+import argparse
+import random
+
+
 import numpy as np 
 from sGA_onemax import genetic_algorithm
 from config import DISTRIB, RANDOM_SEED_VALUES
 from utils import initialize_population
-import math
-import argparse
+
 
 
 def bisection(problem_size, optimized_function, crossover_way):
@@ -22,7 +26,7 @@ def bisection(problem_size, optimized_function, crossover_way):
 	"""
 
 	# Stage 1: Find the upper bound of the population size
-	population_size = 2
+	population_size = 4
 
 	# # Run the the first times
 	# intital_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB) 	
@@ -33,15 +37,16 @@ def bisection(problem_size, optimized_function, crossover_way):
 	print("|\t ---> Stage 1: Find upper bound of MRPS ...")
 	while True:
 
-		print("|\t ---> [INFO] The size of population is {}".format(population_size))
-		population_size *= 2
-
+		#print("|\t ---> [INFO] The size of population is {}".format(population_size))
+		
 		flag = True
 		# Run 10 times
 		for i in range(10):
-			#np.random.seed(RANDOM_SEED_VALUES[i])
-			intital_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB) 	
-			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intital_population, 
+
+			random.seed(RANDOM_SEED_VALUES[i])
+
+			intitial_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB)
+			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intitial_population, 
 																		optimized_function=optimized_function, crossover_way=crossover_way, tournament_size=4)
 			if not success:
 				flag = False
@@ -49,35 +54,52 @@ def bisection(problem_size, optimized_function, crossover_way):
 		if flag:
 			break
 
+		population_size *= 2
+
+
 	print("|\t\t ---> The upper bound of MRPS is {}".format(population_size))
 
 	# Stage 2: Find MRPS
 	print("|\t ---> Stage 2: Find MRPS")
 	upper_N = population_size
 	lower_N = upper_N // 2
-	number_of_evaluations_ = 0
+	number_of_evaluations_ = number_of_evaluations
+	update = False
 
 	while (upper_N - lower_N) / upper_N > 0.1:
 		
 		N = math.ceil((upper_N + lower_N) / 2)
 
 		flag = True
-		number_of_evaluations_ = 0
+
+		if not update:
+			number_of_evaluations_ = 0
+
 		# Run 10 times
 		for i in range(10):
-			#np.random.seed(RANDOM_SEED_VALUES[i])
-			intital_population = initialize_population(N=N, l=problem_size, distribution=DISTRIB) 	
-			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intital_population, 
+
+			random.seed(RANDOM_SEED_VALUES[i])
+
+			intitial_population = initialize_population(N=N, l=problem_size, distribution=DISTRIB) 	
+			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intitial_population, 
 															optimized_function=optimized_function, crossover_way=crossover_way, tournament_size=4)
 			if not success:
 				flag = False
 				break
+
 			number_of_evaluations_ += number_of_evaluations
+		
+			# print("The popszie {}, {}th sGA".format(N, i), number_of_evaluations_)
+			# input()
 
 		if flag:
 			upper_N = N
+			update = True
 		else:
 			lower_N = N
+
+		# print("Lower bound: {}".format(lower_N))
+		# print("Upper bound: {}".format(upper_N))
 
 		if upper_N - lower_N <= 2:
 			break

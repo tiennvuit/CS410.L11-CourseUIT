@@ -1,5 +1,4 @@
 import numpy as np
-import numpy.random as random
 
 
 def initialize_population(N: int, l: int, distribution: dict):
@@ -23,17 +22,19 @@ def initialize_population(N: int, l: int, distribution: dict):
 
         for j in range(l):    # Loop though each variable of the individual    
             # Create a random trial to determine the value of variable.
-            random_value = random.random()
+            random_value = np.random.random()
             for key, value in distribution.items():
                 # print(value)
                 # print(random_value)
                 if random_value >= value[0] and random_value < value[1]:
                     individual[j] = key
                     break
-                    
+
         # Add the individual to population
         population.append(individual)
 
+    # print(np.array(population))
+    # input()
     return np.array(population)
 
 
@@ -116,7 +117,7 @@ def crossover(population: np.ndarray, crossover_way='1X', threshold=None):
             parrent_individual = (population[i], population[i+1])
             
             # Generate the pivot index
-            pivot_index = random.randint(0, l+1)
+            pivot_index = np.random.randint(0, l+1)
             
             # Concatenate two subgen from parent
             child_individual1 = np.concatenate([parrent_individual[0][0:pivot_index], parrent_individual[1][pivot_index:l]])
@@ -132,7 +133,7 @@ def crossover(population: np.ndarray, crossover_way='1X', threshold=None):
             parrent_individual = (population[i], population[i+1])
             
             # Generate the pivot index
-            pivot_indices = random.randint(0, l+1, 2)
+            pivot_indices = np.random.randint(0, l+1, 2)
             
             # Concatenate two subgen from parent
             child_individual1 = np.concatenate([parrent_individual[0][0:pivot_indices[0]], 
@@ -148,19 +149,20 @@ def crossover(population: np.ndarray, crossover_way='1X', threshold=None):
             crossovered_individuals.append(child_individual2)
 
     elif crossover_way == 'UX':
+        
         for i in range(0, N-1, 2):
 
             parrent_individual = (population[i], population[i+1])
             
             # Generate the pivot indices by uniform distribution
-            pivot_index = random.uniform(low=0, high=1, size=l)
-            
+            pivot_index = np.random.uniform(low=0, high=1, size=l)
+
             # Concatenate two subgen from parent
             child_individual1 = parrent_individual[0].copy()   # assumpt like father
             child_individual2 = parrent_individual[1].copy()   # assumpt like mother
 
             for i in range(l):
-                if pivot_index < threshold:               # make the crossover 
+                if pivot_index[i] < threshold:               # make the crossover 
                     child_individual1[i] = parrent_individual[1][i] 
                     child_individual2[i] = parrent_individual[0][i]
 
@@ -217,7 +219,7 @@ def tournament_selection(population: np.ndarray, tournament_size:int, optimized_
     for time in range(times): 
 
         # Shuffle the population
-        random.shuffle(population)
+        np.random.shuffle(population)
         
         # Divide tournaments with the same size
         tournaments = []
