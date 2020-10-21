@@ -1,3 +1,8 @@
+# Usage
+"""
+	python main.py -pro_size 10 -func 1MAX -crossover 1X
+"""
+
 import os
 import numpy as np 
 from sGA_onemax import genetic_algorithm
