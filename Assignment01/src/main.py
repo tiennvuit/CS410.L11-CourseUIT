@@ -105,7 +105,7 @@ def bisection(problem_size, optimized_function, crossover_way):
 			break
 
 	print("|\t\t ---> [INFO] The found MRPS is {}".format(population_size))
-	print("|\t\t ---> [INFO] The number of evaluations is {}".format(number_of_evaluations_/10))
+	print("|\t\t ---> [INFO] The number of average evaluations is {}".format(number_of_evaluations_/10))
 
 	return (upper_N, number_of_evaluations_/10)
 
