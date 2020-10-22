@@ -136,7 +136,8 @@ def visualize_data(processed_data, problem_sizes, value, function, saving_path):
 	ax.set_xscale('log')
 	ax.set_yscale('log')
 	
-	ax.set_xticklabels([10, 20, 40, 80, 160]);
+	ax.set_xticks([10, 20, 40, 80, 160]);
+	ax.set_xticklabels(['10', '20', '40', '80', '160']);
 
 	plt.legend(loc='best')
 	plt.show()
