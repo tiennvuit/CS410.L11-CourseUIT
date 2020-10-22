@@ -126,16 +126,16 @@ def main(args):
 	saving_path = os.path.join(crossover_directory, str(args['problem_size']).zfill(3) + '.npy')
 
 	# print Information before run
-	print("\n\n", "-"*10, "THE INPUT INFORMATION RUNNING EXPERIMENT", "-"*10)
-	print('-'*62)
-	print("|- {:25} | {:<30}|".format("The optimized function ", args['function']))
-	print('-'*62)
-	print("|- {:25} | {:<30}|".format("The crossover way", args['crossover_way']))
-	print('-'*62)
-	print("|- {:25} | {:<30}|".format("The problem size", args['problem_size']))
-	print('-'*62)
-	print("|- {:25} | {:<30}|".format("The output path", saving_path))
-	print('-'*62)
+	# print("\n\n", "-"*10, "THE INPUT INFORMATION RUNNING EXPERIMENT", "-"*10)
+	# print('-'*62)
+	# print("|- {:25} | {:<30}|".format("The optimized function ", args['function']))
+	# print('-'*62)
+	# print("|- {:25} | {:<30}|".format("The crossover way", args['crossover_way']))
+	# print('-'*62)
+	# print("|- {:25} | {:<30}|".format("The problem size", args['problem_size']))
+	# print('-'*62)
+	# print("|- {:25} | {:<30}|".format("The output path", saving_path))
+	# print('-'*62)
 	# print(" - The output path: ", saving_path)
 
 

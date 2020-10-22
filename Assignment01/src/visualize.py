@@ -90,9 +90,14 @@ def print_infor_table(problem_sizes, data: dict):
 
 
 
-def visualize_data(processed_data, problem_sizes, value, function, saving_path):
+def visualize_data(style, processed_data, problem_sizes, value, function, saving_path):
 
-	plt.style.use('seaborn-white')
+	try:
+		plt.style.use(style)
+	except:
+		print("| INVALID STYLE ...")
+		exit(0)
+
 	fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 6))
 	
 	i = 0
@@ -109,8 +114,8 @@ def visualize_data(processed_data, problem_sizes, value, function, saving_path):
 				plt.annotate(label, # this is the text
 							(x,y), # this is the point to label
 			            	textcoords="offset points", # how to position the text
-			                 xytext=(0,10), # distance from text to points (x,y)
-			                 ha='left') # horizontal alignment can be left, right or center
+			                 xytext=(1,15), # distance from text to points (x,y)
+			                 ha='center') # horizontal alignment can be left, right or center
 
 		elif value == 'evaluations':
 			#ax.plot(np.log2(problem_sizes), np.log2(data['mean_evaluations']), label=crossover_way)
@@ -123,15 +128,16 @@ def visualize_data(processed_data, problem_sizes, value, function, saving_path):
 				plt.annotate(label, # this is the text
 			                 (x,y), # this is the point to label
 			                 textcoords="offset points", # how to position the text
-			                 xytext=(0,10), # distance from text to points (x,y)
+			                 xytext=(1,15), # distance from text to points (x,y)
 			                 ha='left') # horizontal alignment can be left, right or center			
 		i += 1
 
+	# Print information about experiment result
 	print_infor_table(problem_sizes, processed_data)
 
-	ax.set_title(r"BIỂU ĐỒ THỂ HIỆN GIÁ TRỊ {} CẦN TỐI ƯU HÀM {}".format(value, function), fontsize=14)
-	ax.set_xlabel(r'PROBLEM SIZE', fontsize=12)
-	ax.set_ylabel(r'{}'.format(value.upper()), fontsize=12)
+	ax.set_title(r"BIỂU ĐỒ THỂ HIỆN GIÁ TRỊ {} CẦN TỐI ƯU HÀM {}".format(value, function), fontsize=14, color='blue')
+	ax.set_xlabel(r'PROBLEM SIZE', fontsize=12, color='red')
+	ax.set_ylabel(r'{}'.format(value.upper()), fontsize=12, color='red')
 
 	ax.set_xscale('log')
 	ax.set_yscale('log')
@@ -171,7 +177,7 @@ def main(args):
 	processed_data = process_data(data)
 
 	# Visualize data
-	visualize_data(processed_data=processed_data, problem_sizes=problem_sizes, value=args['value'], function=args['function'], saving_path=saving_path)
+	visualize_data(style=args['graph_style'], processed_data=processed_data, problem_sizes=problem_sizes, value=args['value'], function=args['function'], saving_path=saving_path)
 
 
 
@@ -182,6 +188,8 @@ if __name__ == '__main__':
 						,help='The function need to be optimized')
 	parser.add_argument('--value', '-val', choices=['MRPS', 'evaluations'], required=True
 						,help='The value need plotting.')
+	parser.add_argument('--graph_style', '-style', default='seaborn-darkgrid'
+						,help='The graph style when plot.')
 
 	args = vars(parser.parse_args())
 	main(args)
