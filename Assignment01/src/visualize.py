@@ -92,7 +92,7 @@ def print_infor_table(problem_sizes, data: dict):
 
 def visualize_data(processed_data, problem_sizes, value, function, saving_path):
 
-	plt.style.use('ggplot')
+	plt.style.use('seaborn-white')
 	fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 6))
 	
 	i = 0
@@ -132,10 +132,11 @@ def visualize_data(processed_data, problem_sizes, value, function, saving_path):
 	ax.set_title(r"BIỂU ĐỒ THỂ HIỆN GIÁ TRỊ {} CẦN TỐI ƯU HÀM {}".format(value, function), fontsize=14)
 	ax.set_xlabel(r'PROBLEM SIZE', fontsize=12)
 	ax.set_ylabel(r'{}'.format(value.upper()), fontsize=12)
-	#ax.set_xticks(problem_sizes)
+
+	ax.set_xscale('log')
+	ax.set_yscale('log')
 	
-	plt.xscale('linear')
-	plt.yscale('log')
+	ax.set_xticklabels([10, 20, 40, 80, 160]);
 
 	plt.legend(loc='best')
 	plt.show()
