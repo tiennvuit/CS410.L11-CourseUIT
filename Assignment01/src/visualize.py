@@ -1,6 +1,6 @@
 # Usage
 """
-	python visualize.py -func 1MAX -crossover 1X
+	python visualize.py -func 1MAX -val MRPS
 
 """
 
@@ -10,11 +10,6 @@ import os
 from matplotlib import pyplot as plt
 import numpy as np
 import math
-
-VALUE_PLOT = {
-	'MRPS': 'MRPS_mean_values',
-	'eval': 'mean_evaluations'
-}
 
 
 # Load data from directory
@@ -75,28 +70,73 @@ def process_data(entire_data):
 	return processed_data
 
 
+def print_infor_table(problem_sizes, data: dict):
+
+	print("-"*104)
+	print("|{:^20}|{:^40}|{:^40}|".format(" ", "sGA-1X", "sGA-UX"))
+	print("-"*104)
+	print("|{:^20}|{:^19}|{:^20}|{:^19}|{:^20}|".format("Problem size", "MRPS", "# Evaluations", "MRPS", "# Evaluations"))
+	print("-"*104)
+	for i, problem_size in enumerate(problem_sizes):
+
+		print(r"|{:^20}|{:^19}|{:^20}|{:^19}|{:^20}|".format(problem_size, 
+						str(round(data['1X']['MRPS_mean_values'][i], 2)) + '+-' + str(round(data['1X']['MRPS_standard_deviations'][i], 2)), 
+						str(round(data['1X']['mean_evaluations'][i], 2)) + '+-' + str(round(data['1X']['standard_deviation_evaluations'][i], 2)), 
+						str(round(data['UX']['MRPS_mean_values'][i], 2)) + '+-' + str(round(data['UX']['MRPS_standard_deviations'][i], 2)), 
+						str(round(data['UX']['mean_evaluations'][i], 2)) + '+-' + str(round(data['UX']['standard_deviation_evaluations'][i], 2))))
+		print("-"*104)
+
+	print("-"*104)
+
+
+
 def visualize_data(processed_data, problem_sizes, value, function, saving_path):
 
+	plt.style.use('ggplot')
 	fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 6))
 	
+	i = 0
 	for crossover_way, data in processed_data.items():
-
+		# print('{}\n{}'.format(crossover_way, data))
+		# input()
 		if value == 'MRPS':
 			#ax.plot(np.log2(problem_sizes), np.log2(data['MRPS_mean_values']), label=crossover_way)
-			ax.errorbar(np.log2(problem_sizes), np.log2(data['MRPS_mean_values']), 
-						np.log10(data['MRPS_standard_deviations']), uplims=True, lolims=True,
-						marker='x', linestyle='dashed', label=crossover_way)
+			ax.errorbar(problem_sizes, data['MRPS_mean_values'], 
+						data['MRPS_standard_deviations'], uplims=True, lolims=True,
+						marker=i, linestyle='solid', label=crossover_way)
+			for x, y in zip(problem_sizes, data['MRPS_mean_values']):
+				label = "{:.2f}".format(y)
+				plt.annotate(label, # this is the text
+							(x,y), # this is the point to label
+			            	textcoords="offset points", # how to position the text
+			                 xytext=(0,10), # distance from text to points (x,y)
+			                 ha='left') # horizontal alignment can be left, right or center
+
 		elif value == 'evaluations':
 			#ax.plot(np.log2(problem_sizes), np.log2(data['mean_evaluations']), label=crossover_way)
-			ax.errorbar(np.log2(problem_sizes), np.log2(data['mean_evaluations']), 
-						np.log10(data['standard_deviation_evaluations']), uplims=True, lolims=True,
-						marker='o', linestyle='dashdot', label=crossover_way)
-	
+			ax.errorbar(problem_sizes, data['mean_evaluations'], 
+						data['standard_deviation_evaluations'], uplims=True, lolims=True,
+						marker='o', linestyle='solid', label=crossover_way)
+
+			for x, y in zip(problem_sizes, data['mean_evaluations']):
+				label = "{:.2f}".format(y)
+				plt.annotate(label, # this is the text
+			                 (x,y), # this is the point to label
+			                 textcoords="offset points", # how to position the text
+			                 xytext=(0,10), # distance from text to points (x,y)
+			                 ha='left') # horizontal alignment can be left, right or center			
+		i += 1
+
+	print_infor_table(problem_sizes, processed_data)
+
 	ax.set_title(r"BIỂU ĐỒ THỂ HIỆN GIÁ TRỊ {} CẦN TỐI ƯU HÀM {}".format(value, function), fontsize=14)
 	ax.set_xlabel(r'PROBLEM SIZE', fontsize=12)
 	ax.set_ylabel(r'{}'.format(value.upper()), fontsize=12)
-	ax.set_xticks(np.log2(problem_sizes))
+	#ax.set_xticks(problem_sizes)
 	
+	plt.xscale('linear')
+	plt.yscale('log')
+
 	plt.legend(loc='best')
 	plt.show()
 
@@ -109,7 +149,7 @@ def main(args):
 
 	saving_directory = os.path.join('../figure', args['function'])
 	if not os.path.exists(saving_directory):
-		os.midir(saving_directory)
+		os.mkdir(saving_directory)
 
 	saving_path = os.path.join(saving_directory, args['value'] + '.png')
 
@@ -140,5 +180,6 @@ if __name__ == '__main__':
 						,help='The function need to be optimized')
 	parser.add_argument('--value', '-val', choices=['MRPS', 'evaluations'], required=True
 						,help='The value need plotting.')
+
 	args = vars(parser.parse_args())
 	main(args)
