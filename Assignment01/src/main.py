@@ -123,7 +123,7 @@ def main(args):
 		os.mkdir(crossover_directory)
 
 
-	saving_path = os.path.join(crossover_directory, str(args['problem_size']) + '.npy')
+	saving_path = os.path.join(crossover_directory, str(args['problem_size']).zfill(3) + '.npy')
 
 	# print Information before run
 	print("\n\n", "-"*10, "THE INPUT INFORMATION RUNNING EXPERIMENT", "-"*10)
