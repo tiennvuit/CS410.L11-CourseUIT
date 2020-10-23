@@ -11,12 +11,16 @@ import random
 
 import numpy as np 
 from sGA_onemax import genetic_algorithm
-from config import DISTRIB, RANDOM_SEED_VALUES
+from config import DISTRIB
 from utils import initialize_population
 
 
+MSSV = int(18521489)
 
-def bisection(problem_size, optimized_function, crossover_way):
+RANDOM_SEED_VALUES = np.array([[i+j for j in range(10)] for i in range(0, 100, 10)])
+
+
+def bisection(problem_size, optimized_function, crossover_way, bisection_th):
 	"""
 	- Description: Find the upper bound of the Minimally Required population size - MRPS
 	- Arguments:
@@ -35,16 +39,18 @@ def bisection(problem_size, optimized_function, crossover_way):
 
 	# Stage 1: Find the upper bound of MRPS
 	print("|\t ---> Stage 1: Find upper bound of MRPS ...")
-	while True:
+	while population_size <= 8192:
 
 		#print("|\t ---> [INFO] The size of population is {}".format(population_size))
-		
+		population_size *= 2
+		print(population_size)
+
 		flag = True
 		# Run 10 times
 		for i in range(10):
 
-			np.random.seed(RANDOM_SEED_VALUES[i])
-
+			np.random.seed(RANDOM_SEED_VALUES[bisection_th][i])
+		
 			intitial_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB)
 			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intitial_population, 
 																		optimized_function=optimized_function, crossover_way=crossover_way, tournament_size=4)
@@ -53,9 +59,7 @@ def bisection(problem_size, optimized_function, crossover_way):
 				break
 		if flag:
 			break
-
-		population_size *= 2
-
+		
 
 	print("|\t\t ---> The upper bound of MRPS is {}".format(population_size))
 
@@ -77,8 +81,8 @@ def bisection(problem_size, optimized_function, crossover_way):
 
 		# Run 10 times
 		for i in range(10):
-
-			np.random.seed(RANDOM_SEED_VALUES[i])
+		
+			np.random.seed(RANDOM_SEED_VALUES[bisection_th][i])
 
 			intitial_population = initialize_population(N=N, l=problem_size, distribution=DISTRIB) 	
 			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intitial_population, 
@@ -88,18 +92,12 @@ def bisection(problem_size, optimized_function, crossover_way):
 				break
 
 			number_of_evaluations_ += number_of_evaluations
-		
-			# print("The popszie {}, {}th sGA".format(N, i), number_of_evaluations_)
-			# input()
 
 		if flag:
 			upper_N = N
 			update = True
 		else:
 			lower_N = N
-
-		# print("Lower bound: {}".format(lower_N))
-		# print("Upper bound: {}".format(upper_N))
 
 		if upper_N - lower_N <= 2:
 			break
@@ -146,7 +144,7 @@ def main(args):
 		print("| ---> Running {}th bisection ...".format(i+1))
 		np.random.seed(RANDOM_SEED_VALUES[i])
 		upperbound_popsize, average_evaluations = bisection(problem_size=args['problem_size'], 
-							optimized_function=args['function'], crossover_way=args['crossover_way'])
+							optimized_function=args['function'], crossover_way=args['crossover_way'], bisection_th=i)
 
 		storage_result.append(np.array([upperbound_popsize, average_evaluations])) 
 	
