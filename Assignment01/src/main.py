@@ -43,7 +43,7 @@ def bisection(problem_size, optimized_function, crossover_way, bisection_th):
 
 		#print("|\t ---> [INFO] The size of population is {}".format(population_size))
 		population_size *= 2
-		print(population_size)
+		# print(population_size)
 
 		flag = True
 		# Run 10 times
