@@ -43,7 +43,7 @@ def bisection(problem_size, optimized_function, crossover_way):
 		# Run 10 times
 		for i in range(10):
 
-			random.seed(RANDOM_SEED_VALUES[i])
+			np.random.seed(RANDOM_SEED_VALUES[i])
 
 			intitial_population = initialize_population(N=population_size, l=problem_size, distribution=DISTRIB)
 			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intitial_population, 
@@ -78,7 +78,7 @@ def bisection(problem_size, optimized_function, crossover_way):
 		# Run 10 times
 		for i in range(10):
 
-			random.seed(RANDOM_SEED_VALUES[i])
+			np.random.seed(RANDOM_SEED_VALUES[i])
 
 			intitial_population = initialize_population(N=N, l=problem_size, distribution=DISTRIB) 	
 			success, converge_configuration, number_of_evaluations = genetic_algorithm(initialized_population=intitial_population, 

@@ -1,3 +1,8 @@
+# Usage:
+"""
+    python sGA_onemax.py -pop_size 20 -pro_size 10 -tour_size 4 -func 1MAX -crossover 1X
+"""
+
 
 # Imported Pakages
 from utils import *#(initialize_population, fitness, evaluation, crossover, pop_pool, tournament_selection, check_convergence)
