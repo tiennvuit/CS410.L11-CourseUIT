@@ -6,7 +6,6 @@
 import os
 import math
 import argparse
-import random
 
 
 import numpy as np 
@@ -15,10 +14,11 @@ from config import DISTRIB
 from utils import initialize_population
 
 
-MSSV = int(18521489)
+MSSV = 18521489
 
 RANDOM_SEED_VALUES = np.array([[i+j for j in range(10)] for i in range(0, 100, 10)])
-
+# print(RANDOM_SEED_VALUES)
+# input()
 
 def bisection(problem_size, optimized_function, crossover_way, bisection_th):
 	"""
@@ -39,6 +39,7 @@ def bisection(problem_size, optimized_function, crossover_way, bisection_th):
 
 	# Stage 1: Find the upper bound of MRPS
 	print("|\t ---> Stage 1: Find upper bound of MRPS ...")
+	
 	while population_size <= 8192:
 
 		population_size *= 2
@@ -141,7 +142,6 @@ def main(args):
 
 	for i in range(10):
 		print("| ---> Running {}th bisection ...".format(i+1))
-		np.random.seed(RANDOM_SEED_VALUES[i])
 		upperbound_popsize, average_evaluations = bisection(problem_size=args['problem_size'], 
 							optimized_function=args['function'], crossover_way=args['crossover_way'], bisection_th=i)
 
