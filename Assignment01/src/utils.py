@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def initialize_population(N: int, l: int, distribution: dict):
     """
     - Description: Khởi tạo quần thể với N cá thể
