@@ -41,7 +41,6 @@ def bisection(problem_size, optimized_function, crossover_way, bisection_th):
 	print("|\t ---> Stage 1: Find upper bound of MRPS ...")
 	while population_size <= 8192:
 
-		#print("|\t ---> [INFO] The size of population is {}".format(population_size))
 		population_size *= 2
 
 		flag = True
