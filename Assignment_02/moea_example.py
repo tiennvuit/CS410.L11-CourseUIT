@@ -12,6 +12,6 @@ algorithm = MOEAD(
     seed=42,
 )
 
-res = minimize(problem, algorithm, termination=('n_gen', 200))
+res = minimize(problem, algorithm, termination=('n_gen', 200), save_history=True, verbose=True)
 
 get_visualization("scatter").add(res.F).show()

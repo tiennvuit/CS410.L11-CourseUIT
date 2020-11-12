@@ -11,6 +11,8 @@ from pymoo.factory import get_problem, get_sampling, get_crossover, get_mutation
 from pymoo.optimize import minimize
 from pymoo.visualization.scatter import Scatter
 from pymoo.util.plotting import plot
+from pymoo.factory import get_performance_indicator
+
 
 import argparse
 import time
@@ -21,7 +23,7 @@ from utils import print_information
 
 MSSV = 18521489
 
-def main(args, experiment=False):
+def main(args, experiment=True, verbose=True):
 
     # Print information
     print_information(info=args)
@@ -49,7 +51,7 @@ def main(args, experiment=False):
     res = minimize(problem, algorithm, 
                     ('n_gen', args['n_gen']),
                     seed=MSSV,
-                    verbose=False)
+                    verbose=verbose)
 
     # Plot the result
     if not experiment: 
@@ -58,7 +60,12 @@ def main(args, experiment=False):
         plot.add(res.F, color="red")
         plot.show()
 
-    return (res, problem)
+    # Return the solution set and distance IGD+ measure.
+    pf = problem.pareto_front()
+    igd_plus = get_performance_indicator("igd+", pf)
+    IGD = igd_plus.calc(res.F)
+
+    return (res, IGD)
 
 
 if __name__ == '__main__':
@@ -82,6 +89,6 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
 
     # Run the block main execution
-    main(args)
+    main(args, experiment=False)
 
     print("Thank you !")
