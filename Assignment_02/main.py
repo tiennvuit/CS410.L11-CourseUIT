@@ -23,21 +23,23 @@ from utils import print_information
 
 MSSV = 18521489
 
-def main(args, experiment=True, verbose=True):
+def main(args, experiment=True, verbose=False):
 
     # Print information
     print_information(info=args)
-    if input("\nAre you sure with input ? (Enter 'N' to try again)").upper() == "N":
-        exit(0)
+    # if input("\nAre you sure with input ? (Enter 'N' to try again)").upper() == "N":
+    #     exit(0)
 
     # Get problem
     if 'zdt' in args['problem']:
         problem = get_problem(args['problem'])
+        print("Fuck")
     else:
         problem = get_problem(args['problem'], args['difficulity'])
+        print("Tien")
 
     # Get the algorithm
-    if args['algorithm'] == 'MOEAD/D':
+    if args['algorithm'] == 'MOEA/D':
         algorithm = MOEAD(get_reference_directions("das-dennis", 3, n_partitions=12),
                             n_neighbors=15, decomposition="pbi",
                             prob_neighbor_mating=0.7, seed=MSSV)
@@ -52,7 +54,9 @@ def main(args, experiment=True, verbose=True):
                     ('n_gen', args['n_gen']),
                     seed=MSSV,
                     verbose=verbose)
-
+    # print(res.F)
+    # print(type(res.F))
+    # input()
     # Plot the result
     if not experiment: 
         plot = Scatter()
@@ -62,6 +66,8 @@ def main(args, experiment=True, verbose=True):
 
     # Return the solution set and distance IGD+ measure.
     pf = problem.pareto_front()
+    print(pf)
+    input()
     igd_plus = get_performance_indicator("igd+", pf)
     IGD = igd_plus.calc(res.F)
 
@@ -72,7 +78,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Experimental on MOEA/D and NSGA algorithms.')
     parser.add_argument('--algorithm', type=str, 
-                        default='NSGA2', choices=['MOEAD/D', 'NSGA2'],
+                        default='NSGA2', choices=['MOEA/D', 'NSGA2'],
                         help='The evalutary algorithm using')
     parser.add_argument('--problem', type=str, default='zdt1', 
                         choices=['zdt1', 'zdt2', 'zdt3', 'zdt4', 'zdt6',

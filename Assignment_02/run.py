@@ -6,6 +6,7 @@ import argparse
 from main import main as run_one_time
 from pymoo.factory import get_problem
 from matplotlib import pyplot as plt
+import numpy as np
 
 
 def main(args):
@@ -35,7 +36,7 @@ def main(args):
                 'pop_size': pop_size,
                 'n_gen': n_gen,            
             }
-            nsga2['res'], nsga2['igd'] = run_one_time(args={**args, **input_args})
+            nsga2['res'], nsga2['igd'] = run_one_time(args={**args, **input_args}, verbose=True)
 
             # Run the MOEAD/D algorithm
             input_args = {
@@ -43,14 +44,15 @@ def main(args):
                 'pop_size': pop_size,
                 'n_gen': n_gen+10,            
             }
-            moead['res'], moead['igd'] = run_one_time(args={**args, **input_args})
+            moead['res'], moead['igd'] = run_one_time(args={**args, **input_args}, verbose=True)
             
             
             # Plot two solution of two algorithms
             fig, ax = plt.subplots()
-            ax.scatter(pareto_front[0], pareto_front[1], color="black", alpha=0.7)
-            ax.scatter(moead['res'].F[0], moead['res'].F[1], color="red", label="MOEA/D")
-            ax.scatter(nsga2['res'].F[0], nsga2['res'].F[1], color="blue", label="NSGA2")
+        
+            ax.scatter(pareto_front[:, 0], pareto_front[:, 1], color="black", label='Pareto front')
+            ax.scatter(moead['res'].F[:, 0], moead['res'].F[:, 1], color="red", label="MOEA/D")
+            ax.scatter(nsga2['res'].F[:, 0], nsga2['res'].F[:, 1], color="blue", label="NSGA2")
             ax.set_xlabel(r'$f_1$', fontsize=12)
             ax.set_ylabel(r'$f_2$', fontsize=12)
             ax.set_title('Comparation between MOEA/D and NSGA2 with number {} of evalutaions'.format(pop_size*n_gen))
@@ -62,6 +64,8 @@ def main(args):
             print("{:^77s}".format("COMPARATION BETWEEN TWO ALGORITHMS"))
             
             plt.show()
+            saving_name = os.path.join('figures', '{}_{}_{}.png'.format(args['problem'], pop_size, n_gen))
+            plt.save(saving_name)
             
 
 
@@ -73,12 +77,6 @@ if __name__ == '__main__':
                         help='The problem solving.')
     parser.add_argument('--difficulity', type=int, default=1, choices=[1, 2, 3, 4, 5, 6],
                         help='The difficulty of problem.')
-    # parser.add_argument('--pop_size', type=int, default=100,
-    #                     choices=[100, 200, 300, 400, 500],
-    #                     help='The population in genetic algorithm.')
-    # parser.add_argument('--n_gen', type=int, default=100,
-    #                     choices=[100, 200, 300, 400, 500],
-    #                     help='The maximum generations of EA.')
     args = vars(parser.parse_args())
 
     main(args)
