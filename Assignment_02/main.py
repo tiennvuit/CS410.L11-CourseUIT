@@ -16,7 +16,9 @@ from pymoo.factory import get_performance_indicator
 
 import argparse
 import time
+import os
 import numpy as np
+from matplotlib import pyplot as plt
 
 from utils import print_information
 
@@ -33,44 +35,43 @@ def main(args, experiment=True, verbose=False):
     # Get problem
     if 'zdt' in args['problem']:
         problem = get_problem(args['problem'])
-        print("Fuck")
     else:
         problem = get_problem(args['problem'], args['difficulity'])
-        print("Tien")
+        # problem = get_problem("dascmop1", 1)
 
     # Get the algorithm
-    if args['algorithm'] == 'MOEA/D':
+    if args['algorithm'] == 'MOEAD':
         algorithm = MOEAD(get_reference_directions("das-dennis", 3, n_partitions=12),
                             n_neighbors=15, decomposition="pbi",
                             prob_neighbor_mating=0.7, seed=MSSV)
     else:
-        algorithm = NSGA2(pop_size=args['pop_size'], sampling=get_sampling("bin_random"),
-                  crossover=get_crossover("bin_two_point"),
-                  mutation=get_mutation("bin_bitflip"),
-                  eliminate_duplicates=True)
+        algorithm = NSGA2(pop_size=args['pop_size'])
 
     # Run the algorithm to solve the problem
     res = minimize(problem, algorithm, 
                     ('n_gen', args['n_gen']),
                     seed=MSSV,
                     verbose=verbose)
-    # print(res.F)
-    # print(type(res.F))
-    # input()
+
     # Plot the result
-    if not experiment: 
-        plot = Scatter()
-        plot.add(problem.pareto_front(), plot_type="line", color="black", alpha=0.7)
-        plot.add(res.F, color="red")
-        plot.show()
+    if experiment: 
+        fig, ax = plt.subplots()
+        ax.plot(problem.pareto_front()[:, 0], problem.pareto_front()[:, 1], color="black", alpha=0.5, label='Pareto front')
+        ax.scatter(res.F[:,0], res.F[:,1], color="red", label="Solution")
+        ax.set_title(' {} - {} - {}pop_size - {}n_gens '.format(args['problem'], args['algorithm'], args['pop_size'], args['n_gen']), fontsize=14)
+        ax.set_xlabel(r'$f_1$', fontsize=12)
+        ax.set_ylabel(r'$f_2$', fontsize=12)
+        ax.legend(loc='best')
+
+        saving_file = os.path.join('figures', '{}_{}_{}_{}.png'.format(args['problem'], args['algorithm'], args['pop_size'], args['n_gen']))
+        fig.savefig(saving_file)
+        print("Saved the plot result to {}".format(saving_file))
 
     # Return the solution set and distance IGD+ measure.
     pf = problem.pareto_front()
-    print(pf)
-    input()
     igd_plus = get_performance_indicator("igd+", pf)
     IGD = igd_plus.calc(res.F)
-
+    print("The inverted general distance plus (igd+) when run {} is {}".format(args['algorithm'],  IGD))
     return (res, IGD)
 
 
@@ -78,7 +79,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Experimental on MOEA/D and NSGA algorithms.')
     parser.add_argument('--algorithm', type=str, 
-                        default='NSGA2', choices=['MOEA/D', 'NSGA2'],
+                        default='NSGA2', choices=['MOEAD', 'NSGA2'],
                         help='The evalutary algorithm using')
     parser.add_argument('--problem', type=str, default='zdt1', 
                         choices=['zdt1', 'zdt2', 'zdt3', 'zdt4', 'zdt6',
@@ -94,7 +95,7 @@ if __name__ == '__main__':
                         help='The maximum generations of EA.')
     args = vars(parser.parse_args())
 
-    # Run the block main execution
-    main(args, experiment=False)
+    # Run the main execution
+    main(args, experiment=True)
 
     print("Thank you !")
