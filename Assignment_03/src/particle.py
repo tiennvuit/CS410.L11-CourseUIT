@@ -10,13 +10,12 @@ class Particle():
 
 
     def __init__(self, optimizing_func):
+
         self.func = optimizing_func
         self.position = []
         self.dim = optimizing_func['dimension']
         
         for _ in range(self.dim):
-            #self.position.append((-1) ** (bool(random.getrandbits(1))) * random.random()*optimizing_func['search_domain'])
-            # CHANGE latter with np.random
             self.position.append((-1) ** (bool(np.random.randint(low=0, high=2, size=1))) * np.random.random()*self.func['search_domain'])
 
         self.position = np.array(self.position)
