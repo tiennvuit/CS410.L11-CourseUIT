@@ -11,7 +11,7 @@ from problem_config import PROBLEM_CONFIG
 class PSO_Ring():
 
 
-    def __init__(self, n_particles, n_gen, name_func:str, seed=18521489):
+    def __init__(self, n_particles:int, n_gen:int, name_func:str, seed=18521489):
 
         np.random.seed(seed=seed)
 
@@ -72,12 +72,12 @@ class PSO_Ring():
 
         np.random.seed(seed=seed)
 
-        base_dir = os.path.join('result', 'ring')
+        base_dir = os.path.join('log_files', 'ring')
         if not os.path.exists(base_dir):
             os.mkdir(base_dir)
 
         saving_folder = os.path.join(
-            'result', 'ring', "{}_{}_{}_{}".format(self.func, str(self.n_particles), str(self.n_gen), str(seed)))
+            'log_files', 'ring', "{}_{}_{}_{}".format(self.func, str(self.n_particles), str(self.n_gen), str(seed)))
         if os.path.exists(saving_folder):
             shutil.rmtree(saving_folder)
         os.mkdir(saving_folder)
@@ -86,8 +86,8 @@ class PSO_Ring():
             print("-"*33 + "RUNING PSO ALGORITHM with RING TOPOLOGY" + "-"*33)
             print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
                     'n_gen', 'evals', 'best_val', 'mean_bscore', 'std_bscore', 'true_optimal_diff'))
-
-        print("-"*127)
+            print("-"*127)
+        
         n_evaluations = 0
     
         for i in range(self.n_gen):
@@ -102,6 +102,7 @@ class PSO_Ring():
                     self.gen_best_val = particle.score
                     self.gen_best_pos = particle.position
                 n_evaluations += 1
+                
                 if n_evaluations > limit_evals:
                     return result, self.gen_best_val, self.gen_best_pos
 
@@ -128,8 +129,10 @@ class PSO_Ring():
 
             if np.array(self.best_of_particles_score).std() < 0.001:
                 return result, self.gen_best_val, self.gen_best_pos
-
-        print("-"*127)
+            
+        if verbose:
+            print("-"*127)
+            
             #self.print_particle()
         return result, self.gen_best_val, self.gen_best_pos
 
@@ -159,5 +162,5 @@ if __name__ == '__main__':
                        n_gen=args['n_gen'], 
                        name_func=args['func'])
 
-    obj_pso.solve(limit_evals=args['evaluations'], verbose=True, track=True)
+    obj_pso.solve(limit_evals=args['evaluations'], verbose=True, track=False)
     

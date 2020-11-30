@@ -11,7 +11,7 @@ from problem_config import PROBLEM_CONFIG
 class PSO_Star():
 
 
-    def __init__(self, n_particles, n_gen, name_func:str, seed=18521489):
+    def __init__(self, n_particles:int, n_gen:int, name_func:str, seed=18521489):
 
         np.random.seed(seed=seed)
         self.n_particles = n_particles
@@ -37,12 +37,12 @@ class PSO_Star():
 
         np.random.seed(seed=seed)
 
-        base_dir = os.path.join('result', 'star')
+        base_dir = os.path.join('log_files', 'star')
         if not os.path.exists(base_dir):
             os.mkdir(base_dir)
 
         saving_folder = os.path.join(
-            'result', 'star', "{}_{}_{}_{}".format(self.func, str(self.n_particles), str(self.n_gen), str(seed)))
+            'log_files', 'star', "{}_{}_{}_{}".format(self.func, str(self.n_particles), str(self.n_gen), str(seed)))
         if os.path.exists(saving_folder):
             shutil.rmtree(saving_folder)
         os.mkdir(saving_folder)
@@ -51,8 +51,7 @@ class PSO_Star():
             print("-"*33 + "RUNING PSO ALGORITHM with STAR TOPOLOGY" + "-"*33)
             print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
                     'n_gen', 'evals', 'best_val', 'mean_particle', 'std_particle', 'true_optimal_diff'))
-
-        print("-"*127)
+            print("-"*127)
         n_evaluations = 0
     
         for i in range(self.n_gen):
@@ -93,7 +92,8 @@ class PSO_Star():
             if np.array([x.score for x in self.particles]).std() < 0.00001:
                 return result, self.gen_best_val, self.gen_best_pos
             
-        print("-"*127)
+        if verbose:
+            print("-"*127)
             #self.print_particle()
             #input()
         return result, self.gen_best_val, self.gen_best_pos
@@ -124,5 +124,5 @@ if __name__ == '__main__':
                        n_gen=args['n_gen'], 
                        name_func=args['func'])
 
-    obj_pso.solve(limit_evals=args['evaluations'], verbose=True, track=True)
+    obj_pso.solve(limit_evals=args['evaluations'], verbose=True, track=False)
     

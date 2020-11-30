@@ -6,7 +6,7 @@ import numpy as np
 
 from pso_ring import PSO_Ring
 from pso_star import PSO_Star
-
+from problem_config import PROBLEM_CONFIG
 
 PSO = {
     'star': PSO_Star,
@@ -26,24 +26,27 @@ def print_info(args):
 
 def main(args):
     
-    SEED = 18521489
 
     if args['func']=='Rastrigin_10D' or args['func']=='Rosenbrock_10D':    
         
         n_PARTICLES = [128, 256, 512, 1024, 2048]
 
+        print("-"*19 + "STATISTIC TABLE FOR {} TOPOLOPY WITH DIFFERENT NUMBER OF PARTICLES".format(
+                                args['topo'].upper())+ "-"*19)
         print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
-            'n_particles', 'mean_value', 'std_value', 'mean_pos', 'std_pos'))
-        print("Ahihi")
+              'n_particles', 'mean_value', 'std_value', 'mean_pos', 'std_pos', 'true_optimal_diff'))
+        print("-"*106)
         for n_particles in n_PARTICLES:
             
+            SEED = 18521489
+
             values = []
             positions = []
             # Run 10 times
             for i in range(10):
                 np.random.seed(SEED)
                 solver = PSO[args['topo']](n_particles=n_particles, 
-                                n_gen=1e12, 
+                                n_gen=int(1e12), 
                                 name_func=args['func'], seed=SEED)
                 res, value, pos = solver.solve(limit_evals=1e6, verbose=False, track=True, seed=SEED)
                 values.append(value)
@@ -54,9 +57,13 @@ def main(args):
             positions = np.array(positions)
 
             print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
-                n_particles, values.mean(), values.std(), positions.mean(), positions.std()))
-    
+                n_particles, values.mean(), values.std(), 
+                np.round(positions.mean(), 5), np.round(positions.std(), 5),
+                np.round(np.abs(values.mean()-PROBLEM_CONFIG[args['func']]['true_optimal_minimum']), 5)))
+        print("-"*106)
+
     else:
+        SEED = 18521489
         
         solver = PSO[args['topo']](n_particles=args['n_particles'], 
                             n_gen=args['n_gen'], 
