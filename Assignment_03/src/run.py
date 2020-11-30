@@ -45,7 +45,7 @@ def main(args):
                 solver = PSO[args['topo']](n_particles=n_particles, 
                                 n_gen=1e12, 
                                 name_func=args['func'], seed=SEED)
-                res, value, pos = solver.solve(limit_evals=1e6, verbose=False, track=False, seed=SEED)
+                res, value, pos = solver.solve(limit_evals=1e6, verbose=False, track=True, seed=SEED)
                 values.append(value)
                 positions.append(pos)
                 SEED += 1
@@ -55,14 +55,13 @@ def main(args):
 
             print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
                 n_particles, values.mean(), values.std(), positions.mean(), positions.std()))
-            
-        
+    
     else:
         
         solver = PSO[args['topo']](n_particles=args['n_particles'], 
                             n_gen=args['n_gen'], 
                             name_func=args['func'], seed=SEED)
-        solver.solve(limit_evals=args['evaluations'], verbose=True, track=False, seed=SEED)
+        solver.solve(limit_evals=args['evaluations'], verbose=True, track=True, seed=SEED)
 
 
 
@@ -85,5 +84,5 @@ if __name__ == '__main__':
     np.random.seed(18251489)
 
     print_info(args)
-    
+
     main(args)
