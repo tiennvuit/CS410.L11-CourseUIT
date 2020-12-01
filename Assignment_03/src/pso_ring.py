@@ -83,7 +83,7 @@ class PSO_Ring():
         os.mkdir(saving_folder)
         
         if verbose:
-            print("-"*33 + "RUNING PSO ALGORITHM with RING TOPOLOGY" + "-"*33)
+            print("-"*44 + "RUNING PSO ALGORITHM with RING TOPOLOGY" + "-"*44)
             print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
                     'n_gen', 'evals', 'best_val', 'mean_bscore', 'std_bscore', 'true_optimal_diff'))
             print("-"*127)
@@ -121,7 +121,7 @@ class PSO_Ring():
                     np.round(self.gen_best_val, 5), 
                     np.round(np.array(self.best_of_particles_score).mean(), 5),
                     np.round(np.array(self.best_of_particles_score).std(), 5),
-                    np.round(np.abs(self.gen_best_val-PROBLEM_CONFIG[self.func]['true_optimal_minimum']))))
+                    np.round(np.abs(self.gen_best_val-PROBLEM_CONFIG[self.func]['true_optimal_minimum']), 5)))
 
                 
             if track:

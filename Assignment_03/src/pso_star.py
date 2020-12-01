@@ -48,7 +48,7 @@ class PSO_Star():
         os.mkdir(saving_folder)
         
         if verbose:
-            print("-"*33 + "RUNING PSO ALGORITHM with STAR TOPOLOGY" + "-"*33)
+            print("-"*44 + "RUNING PSO ALGORITHM with STAR TOPOLOGY" + "-"*44)
             print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
                     'n_gen', 'evals', 'best_val', 'mean_particle', 'std_particle', 'true_optimal_diff'))
             print("-"*127)
@@ -84,7 +84,7 @@ class PSO_Star():
                     i, n_evaluations, np.round(self.gen_best_val, 5), 
                     np.round(np.array([x.score for x in self.particles]).mean(), 5),
                     np.round(np.array([x.score for x in self.particles]).std(), 5),
-                    np.round(np.abs(self.gen_best_val-PROBLEM_CONFIG[self.func]['true_optimal_minimum']))))
+                    np.round(np.abs(self.gen_best_val-PROBLEM_CONFIG[self.func]['true_optimal_minimum'])), 5))
 
             if track:
                 np.savetxt(os.path.join(saving_folder, "gen{}".format(str(i).zfill(5))), result)

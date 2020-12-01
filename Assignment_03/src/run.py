@@ -42,6 +42,7 @@ def main(args):
 
             values = []
             positions = []
+
             # Run 10 times
             for i in range(10):
                 np.random.seed(SEED)
@@ -64,11 +65,14 @@ def main(args):
 
     else:
         SEED = 18521489
-        
+
         solver = PSO[args['topo']](n_particles=args['n_particles'], 
                             n_gen=args['n_gen'], 
                             name_func=args['func'], seed=SEED)
-        solver.solve(limit_evals=args['evaluations'], verbose=True, track=True, seed=SEED)
+        res, gbest, bpos = solver.solve(limit_evals=args['evaluations'], verbose=True, track=True, seed=SEED)
+        print("--> gen_best_val is {}".format(np.round(gbest, 4)))
+        print("--> gen_best_pos is {}".format(np.round(bpos, 4)))
+        print("--> true_objective_diff is {}".format(np.round(np.abs(gbest-PROBLEM_CONFIG[args['func']]['true_optimal_minimum']), 4)))
 
 
 
@@ -87,8 +91,6 @@ if __name__ == '__main__':
     parser.add_argument('--evaluations', default=1e6, type=int,
                         help='The limit number of evaluations when running algorithm.')
     args = vars(parser.parse_args())
-
-    np.random.seed(18251489)
 
     print_info(args)
 
