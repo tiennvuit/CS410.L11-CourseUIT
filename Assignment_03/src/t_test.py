@@ -2,6 +2,7 @@ import os
 import argparse
 
 import numpy as np
+from scipy import stats
 
 
 from pso_ring import PSO_Ring
@@ -31,36 +32,52 @@ def main(args):
         
         n_PARTICLES = [128, 256, 512, 1024, 2048]
 
-        print("-"*19 + "STATISTIC TABLE FOR {} TOPOLOPY WITH DIFFERENT NUMBER OF PARTICLES".format(
-                                args['topo'].upper())+ "-"*19)
-        print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
-              'n_particles', 'mean_value', 'std_value', 'mean_pos', 'std_pos', 'true_optimal_diff'))
+        # print("-"*19 + "STATISTIC TABLE FOR {} TOPOLOPY WITH DIFFERENT NUMBER OF PARTICLES".format(
+        #                         args['topo'].upper())+ "-"*19)
+        # print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
+        #       'n_particles', 'mean_value', 'std_value', 'mean_pos', 'std_pos', 'true_optimal_diff'))
         print("-"*106)
         for n_particles in n_PARTICLES:
             
             SEED = 18521489
 
-            values = []
-            positions = []
+            star_values = []
+            ring_values = []
 
             # Run 10 times
             for i in range(10):
                 np.random.seed(SEED)
-                solver = PSO[args['topo']](n_particles=n_particles, 
+                # solver = PSO[args['topo']](n_particles=n_particles, 
+                #                 n_gen=int(1e12), 
+                #                 name_func=args['func'], seed=SEED)
+                # res, value, pos = solver.solve(limit_evals=1e6, verbose=False, track=True, seed=SEED)
+                # values.append(value)
+                # positions.append(pos)
+
+                solver = PSO['star'](n_particles=n_particles, 
                                 n_gen=int(1e12), 
                                 name_func=args['func'], seed=SEED)
                 res, value, pos = solver.solve(limit_evals=1e6, verbose=False, track=True, seed=SEED)
-                values.append(value)
-                positions.append(pos)
+                star_values.append(value)
+
+                solver = PSO['ring'](n_particles=n_particles, 
+                                n_gen=int(1e12), 
+                                name_func=args['func'], seed=SEED)
+                res, value, pos = solver.solve(limit_evals=1e6, verbose=False, track=True, seed=SEED)
+                ring_values.append(value)
                 SEED += 1
 
-            values = np.array(values)
-            positions = np.array(positions)
+            star_values = np.array(star_values)
+            ring_values = np.array(ring_values)
 
-            print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
-                n_particles, values.mean(), values.std(), 
-                np.round(positions.mean(), 5), np.round(positions.std(), 5),
-                np.round(np.abs(values.mean()-PROBLEM_CONFIG[args['func']]['true_optimal_minimum']), 5)))
+            t_test_res = stats.ttest_ind(star_values, ring_values)
+            print("|{:^20}|{:^20}|{:^20}|".format(n_particles, np.round(t_test_res[0], 5), np.round(t_test_res[1]),5))
+
+
+            # print("|{:^20}|{:^20}|{:^20}|{:^20}|{:^20}|".format(
+            #     n_particles, np.round(values.mean(), 5), np.round(values.std(), 5), 
+            #     np.round(positions.mean(), 5), np.round(positions.std(), 5),
+            #     np.round(np.abs(values.mean()-PROBLEM_CONFIG[args['func']]['true_optimal_minimum']), 5)))
         print("-"*106)
 
     else:
